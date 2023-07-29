@@ -19,13 +19,26 @@ All functionality is provided as Rake tasks.
 
 ### Generating a Migration to Drop Ignored Columns
 
-This will generate migrations to drop columns currently being ignored. One migration is generated per model:
+This will generate (but not run!) migrations to drop columns currently being ignored. One migration is generated per model:
 
 ```
 ./bin/rails ignored_columns:migration
 ```
 
-This can be limited to a single model via the `MODEL` environment variable:
+If you have ignored columns that must not be dropped add them to the `SKIP_COLUMNS` environment variable:
+
+```
+./bin/rails ignored_columns:migration SKIP_COLUMNS="some_column,another_column"
+```
+
+You can set this once for your project instead of specifying it every time.
+In this case it is recommended to use the `IGNORED_COLUMNS_SKIP_COLUMNS` environment variable.
+
+```sh
+export IGNORED_COLUMNS_SKIP_COLUMNS="some_column,another_column"
+```
+
+This task can also be limited to a single model via the `MODEL` environment variable:
 
 ```
 ./bin/rails ignored_columns:migration MODEL=User

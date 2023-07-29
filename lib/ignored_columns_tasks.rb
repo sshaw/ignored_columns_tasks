@@ -28,10 +28,10 @@ module IgnoredColumnsTasks
     #
     # +model+ must a an ActiveRecord::Base subclass
     #
-    def dropped(model = nil)
+    def dropped(options = nil)
       Rails.application.eager_load!
 
-      ignored = find_columns(model)
+      ignored = find_columns(options || {})
       if ignored.none?
         puts "No ignored columns exist"
         return
@@ -43,7 +43,7 @@ module IgnoredColumnsTasks
         return
       end
 
-      dropped.group_by(&:klass).sort_by(&:first).each do |klass, columns|
+      dropped.group_by(&:klass).sort_by { |klass, _| klass.name }.each do |klass, columns|
         puts "%s: %s" % [klass.name, columns.sort_by(&:name).to_sentence]
       end
     end
@@ -56,10 +56,10 @@ module IgnoredColumnsTasks
     #
     # +model+ must a an ActiveRecord::Base subclass
     #
-    def migration(model = nil)
+    def migration(options = nil)
       Rails.application.eager_load!
 
-      ignored_columns = find_columns(model)
+      ignored_columns = find_columns(options || {})
       if ignored_columns.none?
         puts "No ignored columns exist"
         return
@@ -98,16 +98,18 @@ module IgnoredColumnsTasks
       klass.ignored_columns = ignored
     end
 
-    def find_columns(klass = nil)
-      if klass
-        ignored_columns(klass)
+    def find_columns(options)
+      if options[:model]
+        ignored_columns(options[:model], options[:skip_columns])
       else
-        all_classes.flat_map { |klass| ignored_columns(klass) }
+        all_classes.flat_map { |klass| ignored_columns(klass, options[:skip_columns]) }
       end
     end
 
-    def ignored_columns(klass)
+    def ignored_columns(klass, skip = nil)
+      skip ||= []
       class_with_all_columns klass do |class_with_all, ignored|
+        ignored -= skip if skip.any?
         ignored.map { |column| Column.new(class_with_all, column, class_with_all.columns_hash[column]) }
       end
     end
