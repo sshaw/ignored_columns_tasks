@@ -8,6 +8,7 @@ module IgnoredColumnsTasks
     def initialize(klass, name, data = nil)
       @klass = klass
       @name = name
+      # Aren't using this now outside of exists
       @data = data
     end
 
