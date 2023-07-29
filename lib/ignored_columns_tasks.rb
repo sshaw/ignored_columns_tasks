@@ -39,7 +39,7 @@ module IgnoredColumnsTasks
 
       dropped = ignored.reject(&:exists?)
       if dropped.none?
-        puts "No ignored column have been dropped"
+        puts "No ignored columns have been dropped"
         return
       end
 
@@ -92,7 +92,7 @@ module IgnoredColumnsTasks
 
       klass.ignored_columns = []
       klass.reset_column_information
-      yield klass, ignored
+      yield klass, ignored.dup
     ensure
       # I mean do we really need to do this?
       klass.ignored_columns = ignored
