@@ -1,0 +1,3 @@
+2023-07-29  v0.1.0
+--------------------
+- Change IGNORED_COLUMNS_SKIP_COLUMNS env var to IGNORED_COLUMNS_TASKS_SKIP_COLUMNS

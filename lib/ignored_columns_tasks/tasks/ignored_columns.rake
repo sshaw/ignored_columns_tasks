@@ -9,9 +9,9 @@ namespace :ignored_columns do
   def skip_columns
     skip = nil
 
-    # IGNORED_COLUMNS_SKIP_COLUMNS is our global, namespaced verison
+    # IGNORED_COLUMNS_TASKS_SKIP_COLUMNS is our global, namespaced version
     # SKIP_COLUMNS is shorter, command-line argument
-    %w[IGNORED_COLUMNS_SKIP_COLUMNS SKIP_COLUMNS].each do |name|
+    %w[IGNORED_COLUMNS_TASKS_SKIP_COLUMNS SKIP_COLUMNS].each do |name|
       if ENV[name]
         skip ||= []
         skip.concat(ENV[name].split(/\s*,\s/))

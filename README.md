@@ -32,13 +32,13 @@ If you have ignored columns that must not be dropped add them to the `SKIP_COLUM
 ```
 
 You can set this once for your project instead of specifying it every time.
-In this case it is recommended to use the `IGNORED_COLUMNS_SKIP_COLUMNS` environment variable.
+In this case it is recommended to use the `IGNORED_COLUMNS_TASKS_SKIP_COLUMNS` environment variable:
 
 ```sh
-export IGNORED_COLUMNS_SKIP_COLUMNS="some_column,another_column"
+export IGNORED_COLUMNS_TASKS_SKIP_COLUMNS="some_column,another_column"
 ```
 
-This task can also be limited to a single model via the `MODEL` environment variable:
+This task can also be limited to a single model by setting the `MODEL` environment variable:
 
 ```
 ./bin/rails ignored_columns:migration MODEL=User
