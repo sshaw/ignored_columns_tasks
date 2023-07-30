@@ -72,12 +72,15 @@ module IgnoredColumnsTasks
         return
       end
 
+      migrations = []
       to_drop.group_by(&:klass).each do |klass, columns|
-        migration = "remove_ignored_columns_from_#{klass.table_name}"
+        migrations << "remove_ignored_columns_from_#{klass.table_name}"
 
         # Assume Rails does the shell quoting on Column#name?
-        Rails::Generators.invoke("active_record:migration", [migration, columns.map(&:name)])
+        Rails::Generators.invoke("active_record:migration", [migrations[-1], columns.map(&:name)])
       end
+
+      apply_strong_migrations(migrations) if defined?(StrongMigrations)
     end
 
     private
@@ -113,6 +116,26 @@ module IgnoredColumnsTasks
         ignored -= skip if skip.any?
         ignored.map { |column| Column.new(class_with_all, column, class_with_all.columns_hash[column]) }
       end
+    end
+
+    def apply_strong_migrations(migrations)
+      migrations.each do |migration|
+        # Better way to do this? There should only be 1 since db:migrate will fail if suffix exists.
+        path = Dir[ Rails.root.join("db/migrate") / "*_#{migration}.rb" ][0]
+        # If we can't find it could be due to migration generator failing. How to tell? $? and return value not reliable
+        next unless path
+
+        add_safety_assured(path)
+      end
+    end
+
+    def add_safety_assured(path)
+      migration = File.read(path)
+      return if migration =~ /\wsafety_assured\s/
+
+      migration.gsub!(/^(\s*)(remove_column.+)(\s*)$/) { "#$1safety_assured { #$2 }#$3" }
+
+      File.write(path, migration)
     end
   end
 end
