@@ -44,6 +44,11 @@ This task can also be limited to a single model by setting the `MODEL` environme
 ./bin/rails ignored_columns:migration MODEL=User
 ```
 
+#### Strong Migrations
+
+If your project uses [Strong Migrations](https://github.com/ankane/strong_migrations) the `remove_column` call
+will be wrapped in a `safety_assured` block.
+
 ### Ignored Columns That Have Been Dropped From Your Database
 
 This will print ignored columns that no longer exist the database:
